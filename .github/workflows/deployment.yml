@@ -34,7 +34,7 @@ jobs:
     name: Terraform DEV Planning
     needs: [INITIALIZE]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
-    environment: dev
+#     environment: dev
     env:
       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
       PIPELINE_LOGGING_LEVEL: DEBUG
