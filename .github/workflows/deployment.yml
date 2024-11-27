@@ -191,7 +191,8 @@ jobs:
 
   RUNNER_CLEANUP:
     name: Clean up job and runner
-    needs: [INITIALIZE, DEV_PLAN, DEV_APPLY, PROD_PLAN, PROD_APPLY]
+#    needs: [INITIALIZE, DEV_PLAN, DEV_APPLY, PROD_PLAN, PROD_APPLY]
+    needs: [INITIALIZE, DEV_PLAN]
     if: always()
     uses: 'Interac/composite-actions-core/.github/workflows/cleanup_runners.yaml@main'
     with:
