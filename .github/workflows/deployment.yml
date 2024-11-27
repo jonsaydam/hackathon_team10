@@ -37,7 +37,7 @@ jobs:
     env:
       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
       PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
       TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
     steps:
       - uses: actions/checkout@v3
@@ -108,7 +108,7 @@ jobs:
     env:
       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
       PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
       TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
     steps:
       - uses: actions/checkout@v3
@@ -138,7 +138,7 @@ jobs:
     env:
       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
       PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
       TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
     steps:
       - uses: actions/checkout@v3
@@ -168,7 +168,7 @@ jobs:
     env:
       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
       PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
       TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
     steps:
       - uses: actions/checkout@v3
