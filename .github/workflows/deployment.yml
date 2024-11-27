@@ -30,7 +30,7 @@ jobs:
     outputs:
       service_name: ${{ steps.runner_service_deployment.outputs.service_name }}
   DEV_PLAN:
-    name: Terraform Provision
+    name: Terraform DEV Planning
     needs: [INITIALIZE]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: dev
@@ -48,7 +48,7 @@ jobs:
         run: |
           pwd
           ls -lRt
-          cp env-vars/dev.tfvars iac_config/
+          cp env_vars/dev.tfvars iac_config/
 
       - name: Running speculative plan action
         id: speculative-plan
@@ -62,7 +62,7 @@ jobs:
           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
   DEV_APPLY:
-    name: Terraform Apply
+    name: Terraform Dev Provision
     needs: [INITIALIZE, DEV_PLAN]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: dev
@@ -78,7 +78,7 @@ jobs:
         shell: 'bash -ileo pipefail {0}'
         id: upload
         run: |
-          cp env-vars/dev.tfvars iac_config/
+          cp env_vars/dev.tfvars iac_config/
 
       - name: Running apply action
         id: APPLY
@@ -92,7 +92,7 @@ jobs:
           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
   PROD_PLAN:
-    name: Terraform Prod Provision Terraform Plan
+    name: Terraform Prod Planning
     needs: [INITIALIZE, DEV_APPLY]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: prod
@@ -108,7 +108,7 @@ jobs:
         shell: 'bash -ileo pipefail {0}'
         id: upload
         run: |
-          cp env-vars/dev.tfvars iac_config/
+          cp env_vars/dev.tfvars iac_config/
 
       - name: Running speculative plan action
         id: speculative-plan
@@ -122,7 +122,7 @@ jobs:
           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
   PROD_APPLY:
-    name: Terraform Production Apply
+    name: Terraform Production Provision
     needs: [INITIALIZE, PROD_PLAN]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: prod
@@ -137,7 +137,7 @@ jobs:
       - name: Configuration File upload
         id: upload
         run: |
-          cp env-vars/prod.tfvars iac_config/
+          cp env_vars/prod.tfvars iac_config/
 
       - name: Running apply action
         id: APPLY
