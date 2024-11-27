@@ -1,0 +1,159 @@
+name: Provision end to end
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '.github/**'
+jobs:
+  INITIALIZE:
+    runs-on: controller
+    name: Initialize
+    defaults:
+      run:
+        shell: 'bash -ileo pipefail {0}'
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+    permissions:
+      pull-requests: read
+      contents: read
+
+    steps:
+      - id: runner_service_deployment
+        name: 🚧 Deploy Runner Service 🚧
+        uses: Interac/composite-action-runner-service-deployer@main
+        with:
+          auth_token: ${{ secrets.RUNNER_DEPLOYMENT_PAT }}
+          ephemeral: false
+          git_commit_token: ${{ secrets.GIT_COMMIT_TOKEN }}
+          non_ephemeral_runner_label: ${{ inputs.non_ephemeral_runner_label }}
+    outputs:
+      service_name: ${{ steps.runner_service_deployment.outputs.service_name }}
+  DEV_PLAN:
+    name: Terraform Provision
+    needs: [INITIALIZE]
+    runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
+    environment: dev
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configuration File upload
+        shell: 'bash -ileo pipefail {0}'
+        id: upload
+        run: |
+          cp env-vars/dev.tfvars iac_config/
+
+      - name: Running speculative plan action
+        id: speculative-plan
+        uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
+        with:
+          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+          BUILD_FOLDER: iac_config
+          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+
+  DEV_APPLY:
+    name: Terraform Apply
+    needs: [INITIALIZE, DEV_PLAN]
+    runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
+    environment: dev
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configuration File upload
+        shell: 'bash -ileo pipefail {0}'
+        id: upload
+        run: |
+          cp env-vars/dev.tfvars iac_config/
+
+      - name: Running apply action
+        id: APPLY
+        uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@main
+        with:
+          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+          BUILD_FOLDER: iac_config
+          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+
+  PROD_PLAN:
+    name: Terraform Prod Provision Terraform Plan
+    needs: [INITIALIZE, DEV_APPLY]
+    runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
+    environment: prod
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configuration File upload
+        shell: 'bash -ileo pipefail {0}'
+        id: upload
+        run: |
+          cp env-vars/dev.tfvars iac_config/
+
+      - name: Running speculative plan action
+        id: speculative-plan
+        uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
+        with:
+          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+          BUILD_FOLDER: iac_config
+          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+
+  PROD_APPLY:
+    name: Terraform Production Apply
+    needs: [INITIALIZE, PROD_PLAN]
+    runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
+    environment: prod
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "InfrastructureAutomation"
+      TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configuration File upload
+        id: upload
+        run: |
+          cp env-vars/prod.tfvars iac_config/
+
+      - name: Running apply action
+        id: APPLY
+        uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@main
+        with:
+          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+          BUILD_FOLDER: iac_config
+          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+
+  RUNNER_CLEANUP:
+    name: Clean up job and runner
+    needs: [INITIALIZE, DEV_PLAN, DEV_APPLY, PROD_PLAN, PROD_APPLY]
+    if: always()
+    uses: 'Interac/composite-actions-core/.github/workflows/cleanup_runners.yaml@main'
+    with:
+      runner-service-name: ${{ needs.INITIALIZE.outputs.service_name }}
+    secrets:
+      auth_token: ${{ secrets.RUNNER_DEPLOYMENT_PAT }}
