@@ -46,6 +46,8 @@ jobs:
         shell: 'bash -ileo pipefail {0}'
         id: upload
         run: |
+          pwd
+          ls -lRt
           cp env-vars/dev.tfvars iac_config/
 
       - name: Running speculative plan action
