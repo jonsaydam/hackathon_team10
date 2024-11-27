@@ -1,0 +1,5 @@
+githubActions:
+  pipelineVersion: 'main'
+  runnerImageName: 'runner-docker'
+  runnerImageVersion: 'beta'
+  pipelineLoggingLevel: 'VERBOSE'
