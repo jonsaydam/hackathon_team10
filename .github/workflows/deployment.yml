@@ -54,7 +54,7 @@ jobs:
         id: speculative-plan
         uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
         with:
-          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_WORKSPACE: "hackaton_team10_np"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
@@ -123,7 +123,7 @@ jobs:
         id: APPLY
         uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@main
         with:
-          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_WORKSPACE: "hackaton_team10_np"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
@@ -153,7 +153,7 @@ jobs:
         id: speculative-plan
         uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
         with:
-          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_WORKSPACE: "hackaton_team10_prod"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
@@ -182,7 +182,7 @@ jobs:
         id: APPLY
         uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@main
         with:
-          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_WORKSPACE: "hackaton_team10_prod"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
