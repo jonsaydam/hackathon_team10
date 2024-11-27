@@ -120,7 +120,7 @@ jobs:
 
       - name: Running apply action
         id: APPLY
-        uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@main
+        uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@hackathon
         with:
           TF_WORKSPACE: "hackaton_team10_np"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
