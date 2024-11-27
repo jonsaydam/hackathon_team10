@@ -43,7 +43,6 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Configuration File upload
-        shell: 'bash -ileo pipefail {0}'
         id: upload
         run: |
           pwd
@@ -52,7 +51,7 @@ jobs:
 
       - name: Running speculative plan action
         id: speculative-plan
-        uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
+        uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@main
         with:
           TF_WORKSPACE: "hackaton_team10_np"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
