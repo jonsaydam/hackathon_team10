@@ -101,7 +101,7 @@ jobs:
 
   DEV_APPLY:
     name: Terraform Dev Provision
-    needs: [INITIALIZE]
+    needs: [INITIALIZE,DEV_PLAN]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: dev
     env:
