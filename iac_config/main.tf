@@ -70,3 +70,16 @@ resource "aws_rds_cluster_instance" "db_instance" {
   instance_class     = "db.r6g.large"
   engine             = "aurora-postgresql"
 }
+
+provider "postgresql" {
+  host     = aws_rds_cluster.aurora.endpoint
+  port     = 5432
+  username = "app_admin"  # The master username for your cluster
+  password = "supersecretpassword"  # Use a secure method to store passwords
+  sslmode  = "require"
+}
+
+resource "postgresql_database" "my_database" {
+  for_each = toset(["db1"])  # List of databases you want to create
+  name     = each.value
+}
