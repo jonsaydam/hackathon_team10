@@ -4,7 +4,8 @@ provider "aws" {
 
 # Call the network module
 module "aurora_network" {
-  source       = "../Modules/terraform-aws-aurora_network"
+  source      = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
+  version     = "1.1.0"
   vpc_cidr     = "10.0.0.0/16"
   subnet_count = 2
   vpc_name     = "Aurora-VPC"
@@ -12,7 +13,7 @@ module "aurora_network" {
 
 # Create a security group for Aurora
 resource "aws_security_group" "aurora_sg" {
-  vpc_id = module.network.vpc_id
+  vpc_id = module.aurora_network.vpc_id
 
   ingress {
     from_port   = 5432
@@ -55,7 +56,7 @@ resource "aws_rds_cluster" "aurora" {
 # Create a DB subnet group
 resource "aws_db_subnet_group" "aurora_subnets" {
   name       = "aurora-subnet-group"
-  subnet_ids = module.network.subnet_ids
+  subnet_ids = module.aurora_network.subnet_ids
 
   tags = {
     Name = "aurora-subnet-group"
