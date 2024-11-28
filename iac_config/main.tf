@@ -7,6 +7,9 @@ terraform {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+}
 module "team10_network" {
   source      = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
   version     = "1.0.1"
