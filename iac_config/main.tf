@@ -39,7 +39,7 @@ resource "aws_rds_cluster" "aurora" {
   cluster_identifier      = "aurora-cluster"
   engine                  = "aurora-postgresql"
   engine_version          = "13.9"
-  master_username         = "admin"
+  master_username         = "app_admin"
   master_password         = "supersecretpassword"
   backup_retention_period = 7
   preferred_backup_window = "07:00-09:00"
