@@ -31,11 +31,11 @@ variable "engine_version" {
 }
 
 variable "master_username" {
-  default  = "admin"
+  default  = "app_admin"
 }
 
 variable "master_password" {
-  default  = "pass"
+  default  = "changemedefinitely!"
 }
 
 variable "backup_retention_period" {

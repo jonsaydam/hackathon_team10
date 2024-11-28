@@ -3,7 +3,7 @@ default = "prod"
 }
 
 variable "cidr_block" {
-  default = "10.0.1.0/24"
+  default = "10.1.0.0/16"
 }
 
 variable "region" {
@@ -22,10 +22,6 @@ variable "aurora_enabled" {
   default  = true
 }
 
-variable "cluster_identifier" {
-  default  = "${env}-aurora-cluster"
-}
-
 variable "engine" {
   default  = "aurora-postgresql"
 }
@@ -34,12 +30,8 @@ variable "engine_version" {
   default  = "15.4"
 }
 
-variable "database_name" {
-  default  = "${env}-database"
-}
-
 variable "master_username" {
-  default  = "admin"
+  default  = "changemedefinitely!"
 }
 
 variable "master_password" {
@@ -52,10 +44,6 @@ variable "backup_retention_period" {
 
 variable "storage_encrypted" {
   default  = true
-}
-
-variable "kms_key_id" {
-  default  = "alias/${env}-aurora-kms"
 }
 
 variable "deletion_protection" {
@@ -71,7 +59,7 @@ variable "preferred_maintenance_window" {
 }
 
 variable "enabled_cloudwatch_logs_exports" {
-  default  = ["postgresql", "audit"]
+  default  = ["postgresql"]
 }
 
 variable "instance_count" {
@@ -92,4 +80,11 @@ variable "apply_immediately" {
 
 variable "auto_minor_version_upgrade" {
   default  = true
+}
+           
+locals {
+  vpc_name  =  "vpc-${var.env}"
+  cluster_identifier = "${var.env}-aurora-cluster"
+  database_name = "${var.env}database"
+  kms_key_id  = "alias/${var.env}-aurora-kms"
 }
