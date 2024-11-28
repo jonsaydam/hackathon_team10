@@ -11,6 +11,7 @@ module "aurora_network" {
   vpc_enabled  = true
   azs          = ["us-east-1a", "us-east-1b"]
   region       = "us-east-1"
+  env          = var.app_environment
 }
 
 # Create a security group for Aurora
