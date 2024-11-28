@@ -59,7 +59,7 @@ variable "preferred_maintenance_window" {
 }
 
 variable "enabled_cloudwatch_logs_exports" {
-  default  = ["postgresql", "audit"]
+  default  = ["postgresql"]
 }
 
 variable "instance_count" {
