@@ -46,7 +46,7 @@ output "security_group_id" {
 module "aurora" {
   count                           = var.aurora_enabled ? 1 : 0
   source                          = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_aurora/aws"
-  version                         = "1.0.1"
+  version                         = "1.0.2"
   region                          = var.region
   azs                             = var.azs
   aurora_enabled                  = var.aurora_enabled
@@ -73,6 +73,18 @@ module "aurora" {
   depends_on                      = [ module.vpc ]
 }
 
+provider "postgresql" {
+  host     = module.aurora[0].endpoint
+  port     = 5432
+  username = var.master_username
+  password = var.master_password
+  sslmode  = "require"
+}
+
+resource "postgresql_database" "my_database" {
+  for_each = toset(["${var.env}-db"])
+  name     = each.value
+}
 
 
 # # Call the network module
@@ -148,15 +160,4 @@ module "aurora" {
 #   publicly_accessible = true
 # }
 
-# provider "postgresql" {
-#   host     = aws_rds_cluster.aurora.endpoint
-#   port     = 5432
-#   username = "app_admin"  # The master username for your cluster
-#   password = "supersecretpassword"  # Use a secure method to store passwords
-#   sslmode  = "require"
-# }
 
-# resource "postgresql_database" "my_database" {
-#   for_each = toset(["db1"])  # List of databases you want to create
-#   name     = each.value
-# }
