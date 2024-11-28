@@ -2,20 +2,6 @@ provider "aws" {
   region = var.region
 }
 
-terraform {
-  required_version = ">= 1.3.0"
-  required_providers {
-    aws    = {
-      source  = "hashicorp/aws"
-      version = ">= 3.0.0"
-    }
-    vault  = {
-      source  = "hashicorp/vault"
-      version = "4.5.0"
-    }
-  }
-}
-
 module "vpc" {
   count       =     var.vpc_enabled ? 1 : 0
   source      =     "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
