@@ -6,11 +6,11 @@ provider "aws" {
 module "aurora_network" {
   source       = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
   version      = "1.2.0"
-  cidr_block   = "10.0.0.0/16"
-  vpc_name     = "Aurora-VPC"
-  vpc_enabled  = true
-  azs          = ["us-east-1a", "us-east-1b"]
-  region       = "us-east-1"
+  cidr_block   = var.vpc_cidr
+  vpc_name     = locals.vpc_name
+  vpc_enabled  = var.vpc_enabled
+  azs          = var.azs
+  region       = var.region
   env          = var.app_environment
 }
 
