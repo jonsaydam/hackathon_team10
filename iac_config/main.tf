@@ -62,3 +62,11 @@ resource "aws_db_subnet_group" "aurora_subnets" {
     Name = "aurora-subnet-group"
   }
 }
+
+resource "aws_rds_cluster_instance" "db_instance" {
+  count              = 2
+  identifier         = "aurora-instance-${count.index + 1}"
+  cluster_identifier = aws_rds_cluster.aurora.id
+  instance_class     = "db.r6g.large"
+  engine             = "aurora-postgresql"
+}
