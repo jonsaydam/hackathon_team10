@@ -10,7 +10,7 @@ module "vpc" {
   env         =     var.env
   vpc_enabled =     var.vpc_enabled
   cidr_block  =     var.cidr_block
-  vpc_name    =     var.vpc_name
+  vpc_name    =     locals.vpc_name
   azs         =     var.azs
 }
 
