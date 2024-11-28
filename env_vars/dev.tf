@@ -47,7 +47,7 @@ variable "storage_encrypted" {
 }
 
 variable "deletion_protection" {
-  default  = true
+  default  = false
 }
 
 variable "preferred_backup_window" {
