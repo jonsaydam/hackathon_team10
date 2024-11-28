@@ -85,6 +85,6 @@ variable "auto_minor_version_upgrade" {
 locals {
   vpc_name  =  "vpc-${var.env}"
   cluster_identifier = "${var.env}-aurora-cluster"
-  database_name = "${var.env}-database"
+  database_name = "${var.env}database"
   kms_key_id  = "alias/${var.env}-aurora-kms"
 }
