@@ -10,7 +10,7 @@ module "vpc" {
   env         =     var.env
   vpc_enabled =     var.vpc_enabled
   cidr_block  =     var.cidr_block
-  vpc_name    =     locals.vpc_name
+  vpc_name    =     local.vpc_name
   azs         =     var.azs
 }
 
@@ -49,11 +49,11 @@ module "aurora" {
   region                          = var.region
   azs                             = var.azs
   aurora_enabled                  = var.aurora_enabled
-  cluster_identifier              = locals.cluster_identifier
+  cluster_identifier              = local.cluster_identifier
   instance_class                  = var.instance_class
   engine                          = var.engine 
   engine_version                  = var.engine_version
-  database_name                   = locals.database_name
+  database_name                   = local.database_name
   master_username                 = var.master_username
   master_password                 = var.master_password
   subnet_ids                      = flatten([for vpc in [module.vpc[0]] : vpc.private_subnets])
@@ -61,7 +61,7 @@ module "aurora" {
   instance_count                  = var.instance_count
   deletion_protection             = var.deletion_protection
   publicly_accessible             = var.publicly_accessible
-  kms_key_id                      = locals.kms_key_id
+  kms_key_id                      = local.kms_key_id
   apply_immediately               = var.apply_immediately
   storage_encrypted               = var.storage_encrypted
   backup_retention_period         = var.backup_retention_period
@@ -79,7 +79,7 @@ module "aurora" {
 #   source       = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
 #   version      = "1.2.0"
 #   cidr_block   = var.vpc_cidr
-#   vpc_name     = locals.vpc_name
+#   vpc_name     = local.vpc_name
 #   vpc_enabled  = var.vpc_enabled
 #   azs          = var.azs
 #   region       = var.region

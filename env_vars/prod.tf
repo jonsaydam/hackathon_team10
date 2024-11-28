@@ -93,7 +93,3 @@ variable "apply_immediately" {
 variable "auto_minor_version_upgrade" {
   default  = true
 }
-
-locals {
-   vpc_name  =  "vpc-${var.env}"
-}
