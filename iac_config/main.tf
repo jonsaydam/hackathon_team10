@@ -9,7 +9,7 @@ terraform {
 
 module "team10_network" {
   source      = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version     = "1.0.0"
+  version     = "1.0.1"
   cidr_block  = var.cidr_block
   env         = var.app_environment
   region      = var.region

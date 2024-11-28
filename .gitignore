@@ -1,2 +1,4 @@
 .vscode/
 .terraform/
+iac_config/.terraform/
+.terraform*
