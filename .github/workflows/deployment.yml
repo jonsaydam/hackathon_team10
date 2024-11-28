@@ -54,7 +54,7 @@ jobs:
         id: speculative-plan
         uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
         with:
-          TF_WORKSPACE: "${vars.TF_WORKSPACE}"
+          TF_WORKSPACE: "${{ vars.TF_WORKSPACE }}"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
@@ -101,7 +101,7 @@ jobs:
 
   DEV_APPLY:
     name: Terraform Dev Provision
-    needs: [INITIALIZE,DEV_PLAN]
+    needs: [INITIALIZE, DEV_PLAN]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: dev
     env:
