@@ -1,14 +1,11 @@
 terraform {
   required_version = ">= 1.3.0"
   required_providers {
-    aws    = {
+    aws = {
       source  = "hashicorp/aws"
       version = "5.77.0"
     }
-}
-
-local "vpc_name" {
-   value  =  vpc-${var.app_environment}
+  }
 }
 
 module "team10_network" {

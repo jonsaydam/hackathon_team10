@@ -17,3 +17,7 @@ variable "vpc_enabled" {
 variable "azs" {
   default  = ["us-east-1a", "us-east-1b"]
 }
+
+locals {
+   vpc_name  =  "vpc-${var.app_environment}"
+}
