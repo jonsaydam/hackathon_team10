@@ -5,7 +5,7 @@ provider "aws" {
 module "vpc" {
   count       =     var.vpc_enabled ? 1 : 0
   source      =     "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version     =     "1.3.0"
+  version     =     "1.3.2"
   region      =     var.region
   env         =     var.env
   vpc_enabled =     var.vpc_enabled
@@ -57,7 +57,7 @@ module "aurora" {
   database_name                   = local.database_name
   master_username                 = var.master_username
   master_password                 = var.master_password
-  subnet_ids                      = flatten([for vpc in [module.vpc[0]] : vpc.private_subnets])
+  subnet_ids                      = flatten([for vpc in [module.vpc[0]] : vpc.public_subnets])
   security_group_ids              = [aws_security_group.security_group[0].id]
   instance_count                  = var.instance_count
   deletion_protection             = var.deletion_protection
