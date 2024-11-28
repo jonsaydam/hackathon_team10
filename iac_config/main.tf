@@ -74,7 +74,7 @@ module "aurora" {
 }
 
 provider "postgresql" {
-  host     = module.aurora[0].endpoint
+  host     = module.aurora[0].cluster_endpoint
   port     = 5432
   username = var.master_username
   password = var.master_password
