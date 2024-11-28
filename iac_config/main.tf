@@ -47,7 +47,7 @@ resource "aws_rds_cluster" "aurora" {
   vpc_security_group_ids = [aws_security_group.aurora_sg.id]
 
   db_subnet_group_name = aws_db_subnet_group.aurora_subnets.name
-
+  skip_final_snapshot = true
   tags = {
     Name = "aurora-cluster"
   }
