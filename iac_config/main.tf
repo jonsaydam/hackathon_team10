@@ -5,7 +5,7 @@ provider "aws" {
 # Call the network module
 module "aurora_network" {
   source      = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version     = "1.1.0"
+  version     = "1.2.0"
   vpc_cidr     = "10.0.0.0/16"
   subnet_count = 2
   vpc_name     = "Aurora-VPC"
