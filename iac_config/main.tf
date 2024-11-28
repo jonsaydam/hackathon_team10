@@ -49,11 +49,11 @@ module "aurora" {
   region                          = var.region
   azs                             = var.azs
   aurora_enabled                  = var.aurora_enabled
-  cluster_identifier              = var.cluster_identifier
+  cluster_identifier              = locals.cluster_identifier
   instance_class                  = var.instance_class
   engine                          = var.engine 
   engine_version                  = var.engine_version
-  database_name                   = var.database_name
+  database_name                   = locals.database_name
   master_username                 = var.master_username
   master_password                 = var.master_password
   subnet_ids                      = flatten([for vpc in [module.vpc[0]] : vpc.private_subnets])
@@ -61,7 +61,7 @@ module "aurora" {
   instance_count                  = var.instance_count
   deletion_protection             = var.deletion_protection
   publicly_accessible             = var.publicly_accessible
-  kms_key_id                      = var.kms_key_id
+  kms_key_id                      = locals.kms_key_id
   apply_immediately               = var.apply_immediately
   storage_encrypted               = var.storage_encrypted
   backup_retention_period         = var.backup_retention_period

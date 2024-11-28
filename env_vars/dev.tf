@@ -22,8 +22,8 @@ variable "aurora_enabled" {
   default  = true
 }
 
-variable "cluster_identifier" {
-  default  = "${var.env}-aurora-cluster"
+locals {
+  cluster_identifier = "${var.env}-aurora-cluster"
 }
 
 variable "engine" {
@@ -34,8 +34,8 @@ variable "engine_version" {
   default  = "15.4"
 }
 
-variable "database_name" {
-  default  = "${var.env}-database"
+locals {
+  database_name = "${var.env}-database"
 }
 
 variable "master_username" {
@@ -54,8 +54,8 @@ variable "storage_encrypted" {
   default  = true
 }
 
-variable "kms_key_id" {
-  default  = "alias/${var.env}-aurora-kms"
+locals {
+  kms_key_id  = "alias/${var.env}-aurora-kms"
 }
 
 variable "deletion_protection" {
