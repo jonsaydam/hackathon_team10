@@ -122,7 +122,7 @@ jobs:
         id: APPLY
         uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@hackathon
         with:
-          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+          TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
