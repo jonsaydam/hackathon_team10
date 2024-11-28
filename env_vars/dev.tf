@@ -2,7 +2,7 @@ variable "app_environment" {
 default = "dev" 
 }
 
-variable "cidr_block" {
+variable "vpc_cidr" {
   default = "10.0.0.0/24"
 }
 
@@ -21,3 +21,4 @@ variable "azs" {
 locals {
    vpc_name  =  "vpc-${var.app_environment}"
 }
+
