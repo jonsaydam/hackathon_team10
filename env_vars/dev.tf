@@ -22,20 +22,12 @@ variable "aurora_enabled" {
   default  = true
 }
 
-locals {
-  cluster_identifier = "${var.env}-aurora-cluster"
-}
-
 variable "engine" {
   default  = "aurora-postgresql"
 }
 
 variable "engine_version" {
   default  = "15.4"
-}
-
-locals {
-  database_name = "${var.env}-database"
 }
 
 variable "master_username" {
@@ -52,10 +44,6 @@ variable "backup_retention_period" {
 
 variable "storage_encrypted" {
   default  = true
-}
-
-locals {
-  kms_key_id  = "alias/${var.env}-aurora-kms"
 }
 
 variable "deletion_protection" {
@@ -95,5 +83,8 @@ variable "auto_minor_version_upgrade" {
 }
            
 locals {
-   vpc_name  =  "vpc-${var.env}"
+  vpc_name  =  "vpc-${var.env}"
+  cluster_identifier = "${var.env}-aurora-cluster"
+  database_name = "${var.env}-database"
+  kms_key_id  = "alias/${var.env}-aurora-kms"
 }
