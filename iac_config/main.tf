@@ -73,18 +73,18 @@ module "aurora" {
   depends_on                      = [ module.vpc ]
 }
 
-provider "postgresql" {
-  host     = module.aurora[0].cluster_endpoint
-  port     = 5432
-  username = var.master_username
-  password = var.master_password
-  sslmode  = "require"
-}
+# provider "postgresql" {
+#   host     = module.aurora[0].cluster_endpoint
+#   port     = 5432
+#   username = var.master_username
+#   password = var.master_password
+#   sslmode  = "require"
+# }
 
-resource "postgresql_database" "my_database" {
-  for_each = toset(["${var.env}-db"])
-  name     = each.value
-}
+# resource "postgresql_database" "my_database" {
+#   for_each = toset(["${var.env}-db"])
+#   name     = each.value
+# }
 
 
 # # Call the network module
