@@ -19,7 +19,7 @@ terraform {
 module "vpc" {
   count       =     var.vpc_enabled ? 1 : 0
   source      =     "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version     =     "1.2.0"
+  version     =     "1.3.0"
   region      =     var.region
   env         =     var.env
   vpc_enabled =     var.vpc_enabled
@@ -58,8 +58,8 @@ output "security_group_id" {
 
 module "aurora" {
   count                           = var.aurora_enabled ? 1 : 0
-  source                          = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version                         = "1.2.0"
+  source                          = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_aurora/aws"
+  version                         = "1.0.0"
   region                          = var.region
   azs                             = var.azs
   aurora_enabled                  = var.aurora_enabled
