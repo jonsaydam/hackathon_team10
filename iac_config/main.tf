@@ -4,11 +4,13 @@ provider "aws" {
 
 # Call the network module
 module "aurora_network" {
-  source      = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version     = "1.2.0"
-  vpc_cidr     = "10.0.0.0/16"
-  subnet_count = 2
+  source       = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
+  version      = "1.2.0"
+  cidr_block   = "10.0.0.0/16"
   vpc_name     = "Aurora-VPC"
+  vpc_enabled  = true
+  azs          = ["us-east-1a", "us-east-1b"]
+  region       = "us-east-1"
 }
 
 # Create a security group for Aurora
