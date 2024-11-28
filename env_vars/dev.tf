@@ -71,7 +71,7 @@ variable "instance_class" {
 }
 
 variable "publicly_accessible" {
-  default  = false
+  default  = true
 }
 
 variable "apply_immediately" {
