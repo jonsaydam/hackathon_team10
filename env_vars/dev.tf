@@ -23,7 +23,7 @@ variable "aurora_enabled" {
 }
 
 variable "cluster_identifier" {
-  default  = "${env}-aurora-cluster"
+  default  = "${var.env}-aurora-cluster"
 }
 
 variable "engine" {
@@ -35,7 +35,7 @@ variable "engine_version" {
 }
 
 variable "database_name" {
-  default  = "${env}-database"
+  default  = "${var.env}-database"
 }
 
 variable "master_username" {
@@ -55,7 +55,7 @@ variable "storage_encrypted" {
 }
 
 variable "kms_key_id" {
-  default  = "alias/${env}-aurora-kms"
+  default  = "alias/${var.env}-aurora-kms"
 }
 
 variable "deletion_protection" {
