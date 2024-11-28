@@ -48,7 +48,7 @@ jobs:
 #         run: |
 #           pwd
 #           ls -lRt
-#           cp env_vars/dev.tfvars iac_config/
+#           cp env_vars/dev.tf iac_config/
 
 #       - name: Running speculative plan action
 #         id: speculative-plan
@@ -116,7 +116,7 @@ jobs:
       - name: Configuration File upload
         id: upload
         run: |
-          cp env_vars/dev.tfvars iac_config/
+          cp env_vars/dev.tf iac_config/
 
       - name: Running apply action
         id: APPLY
@@ -146,7 +146,7 @@ jobs:
 #         shell: 'bash -ileo pipefail {0}'
 #         id: upload
 #         run: |
-#           cp env_vars/dev.tfvars iac_config/
+#           cp env_vars/dev.tf iac_config/
 
 #       - name: Running speculative plan action
 #         id: speculative-plan
@@ -175,7 +175,7 @@ jobs:
 #       - name: Configuration File upload
 #         id: upload
 #         run: |
-#           cp env_vars/prod.tfvars iac_config/
+#           cp env_vars/prod.tf iac_config/
 
 #       - name: Running apply action
 #         id: APPLY
