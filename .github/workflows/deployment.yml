@@ -132,7 +132,7 @@ jobs:
       - name: Create Tables
         id: db_deploy
         run: |
-          curl -o https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
+          curl -O https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
           tar -xzf postgresql-*.tar.gz
           cd postgresql-*
           ./configure --without-server --prefix=$HOME/pgsql
