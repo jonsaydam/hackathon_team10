@@ -75,7 +75,7 @@ jobs:
         id: db_deploy
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ steps.apply.outputs.DB_ENDPOINT }}"
+          DB_HOST: ${{ steps.apply.outputs.DB_ENDPOINT }}
         run: |
           chmod +x schemas/init_schema.sh
           ./schemas/init_schema.sh
