@@ -76,6 +76,7 @@ jobs:
 
   DEV_APPLY:
     name: Terraform Dev Provision
+    needs: [DEV_PLAN]
     runs-on: self-hosted
     environment: dev
     env:
@@ -119,7 +120,7 @@ jobs:
 
   PROD_PLAN:
     name: Terraform Prod Planning
-    needs: [DEV_APPLY]
+    needs: [DEV_PLAN, DEV_APPLY]
     runs-on: self-hosted
     environment: prod
     env:
@@ -148,6 +149,7 @@ jobs:
 
   PROD_APPLY:
     name: Terraform Production Provision
+    needs: [DEV_PLAN, DEV_APPLY, PROD_PLAN]
     runs-on: self-hosted
     environment: prod
     env:
