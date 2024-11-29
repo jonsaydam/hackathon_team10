@@ -38,6 +38,7 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
+          cd iac_config
           terraform validate
 
       # Terraform Plan
@@ -45,6 +46,7 @@ jobs:
         env:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
+          cd iac_config
           terraform plan
       # - uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
       #   id: run
