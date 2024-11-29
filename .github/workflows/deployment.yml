@@ -133,8 +133,8 @@ jobs:
         id: db_deploy
         run: |
           curl -O https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
-          tar -xzf postgresql-*.tar.gz
-          cd postgresql-*
+          tar -xzf postgresql-15.4.tar.gz
+          cd postgresql-15.4
           ./configure --without-server --prefix=$HOME/pgsql
           make
           make install
