@@ -90,7 +90,8 @@ jobs:
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           export DB_NAME=devdatabase
           chmod +x schemas/init_schema.sh
-          ./schemas/init_schema.sh
+          cd schemas
+          ./init_schema.sh
 
       # Test Database
       - name: Test Database Connectivity and Schema
