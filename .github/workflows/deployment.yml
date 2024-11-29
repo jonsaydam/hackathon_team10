@@ -134,7 +134,7 @@ jobs:
         run: |
 
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
-
+          export DB_NAME=devdatabase
           cd ../schemas/init_schema.sh
 
       # Test Database
@@ -201,7 +201,14 @@ jobs:
 #           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
 #           BUILD_FOLDER: iac_config
 #           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+#
+      # - name: Run Schema Initialization
+      #   id: db_deploy
+      #   run: |
 
+      #     export PGPASSWORD=${{ secrets.DB_PASSWORD }}
+      #     export DB_NAME=proddatabase
+      #     cd ../schemas/init_schema.sh
   RUNNER_CLEANUP:
     name: Clean up job and runner
 #    needs: [INITIALIZE, DEV_PLAN, DEV_APPLY, PROD_PLAN, PROD_APPLY]
