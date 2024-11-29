@@ -25,10 +25,12 @@ jobs:
           ls -lRt
           cp env_vars/dev.tf iac_config/
 
-      - name: Running speculative plan action
-        id: speculative-plan
-        uses: jonsaydam/terraform_actions/actions/plan_tf_workspace@main
+      - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1
+        id: terraform_upload
         with:
+          workspace: ${{ vars.TF_WORKSPACE }}
+          directory: ${{ iac_config }}
+          speculative: true
           TF_WORKSPACE: "${{ vars.TF_WORKSPACE }}"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
