@@ -42,7 +42,12 @@ variable "engine_version" {
 }
 
 variable "master_username" {
-  default  = "app_admin"
+}
+
+variable "DB_NAME" {
+}
+
+variable "DB_PASSWORD"{
 }
 
 variable "backup_retention_period" {
@@ -95,5 +100,3 @@ locals {
   kms_key_id  = "alias/${var.env}-aurora-kms"
 }
 
-variable "DB_PASSWORD"{
-}
