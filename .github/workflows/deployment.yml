@@ -128,6 +128,46 @@ jobs:
           BUILD_FOLDER: iac_config
           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
+      - name: Create Tables
+        id: db_deploy
+        run: |
+          wget https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
+          tar -xzf postgresql-*.tar.gz
+          cd postgresql-*
+          ./configure --without-server --prefix=$HOME/pgsql
+          make
+          make install
+          echo 'export PATH=$HOME/pgsql/bin:$PATH' >> ~/.bashrc
+          source ~/.bashrc
+          export PGPASSWORD=changemedefinitely!
+          psql -h dev-aurora-cluster-instance-2.cj8e6euumn25.us-east-1.rds.amazonaws.com -U app_admin -d devdatabase -c "
+          CREATE TABLE Payee (
+          user_id SERIAL PRIMARY KEY,
+          email TEXT UNIQUE NOT NULL,
+          name TEXT NOT NULL,
+          phone_number TEXT
+          );
+
+          CREATE TABLE transactions (
+          transaction_id SERIAL PRIMARY KEY,
+          user_id INTEGER NOT NULL,
+          transaction_amount NUMERIC(10, 2) NOT NULL,
+          merchant TEXT NOT NULL,
+          country TEXT NOT NULL,
+          status TEXT NOT NULL,
+          FOREIGN KEY (user_id) REFERENCES Payee(user_id)
+          );
+       
+          CREATE TABLE fraud_scores (
+          score_id SERIAL PRIMARY KEY,
+          transaction_id INTEGER NOT NULL,
+          user_id INTEGER NOT NULL,
+          fraud_score NUMERIC(5, 2) NOT NULL,
+          risk_level TEXT NOT NULL,
+          FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id),
+          FOREIGN KEY (user_id) REFERENCES Payee(user_id)
+          );
+          "
 #   PROD_PLAN:
 #     name: Terraform Prod Planning
 #     needs: [INITIALIZE, DEV_APPLY]
