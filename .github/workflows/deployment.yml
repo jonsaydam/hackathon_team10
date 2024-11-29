@@ -97,7 +97,7 @@ jobs:
       - name: Test Database Connectivity and Schema
         run: |
           chmod +x test/*
-          cp schmas/terraform_output.json test/terraform_output.json
+          cp schemas/terraform_output.json test/terraform_output.json
           ./test/test_connectivity.sh
           ./test/test_data_integrity.sh
 
