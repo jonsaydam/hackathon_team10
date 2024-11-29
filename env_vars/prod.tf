@@ -31,11 +31,7 @@ variable "engine_version" {
 }
 
 variable "master_username" {
-  default  = "changemedefinitely!"
-}
-
-variable "master_password" {
-  default  = "pass"
+  default  = "app_admin"
 }
 
 variable "backup_retention_period" {
@@ -47,7 +43,7 @@ variable "storage_encrypted" {
 }
 
 variable "deletion_protection" {
-  default  = true
+  default  = false
 }
 
 variable "preferred_backup_window" {
@@ -71,7 +67,7 @@ variable "instance_class" {
 }
 
 variable "publicly_accessible" {
-  default  = false
+  default  = true
 }
 
 variable "apply_immediately" {
@@ -87,4 +83,7 @@ locals {
   cluster_identifier = "${var.env}-aurora-cluster"
   database_name = "${var.env}database"
   kms_key_id  = "alias/${var.env}-aurora-kms"
+}
+
+variable "DB_PASSWORD"{
 }

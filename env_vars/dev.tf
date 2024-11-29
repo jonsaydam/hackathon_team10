@@ -34,10 +34,6 @@ variable "master_username" {
   default  = "app_admin"
 }
 
-variable "master_password" {
-  default  = "changemedefinitely!"
-}
-
 variable "backup_retention_period" {
   default  = 7
 }
@@ -87,4 +83,7 @@ locals {
   cluster_identifier = "${var.env}-aurora-cluster"
   database_name = "${var.env}database"
   kms_key_id  = "alias/${var.env}-aurora-kms"
+}
+
+variable "DB_PASSWORD"{
 }
