@@ -57,7 +57,7 @@ jobs:
           TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
           cd iac_config
-          terraform apply
+          terraform apply -auto-approve
           endpoint=`terraform output`
           echo $endpoint > terraform_output.json
 
