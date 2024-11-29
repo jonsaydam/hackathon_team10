@@ -95,7 +95,3 @@ locals {
   database_name = "${var.env}database"
   kms_key_id  = "alias/${var.env}-aurora-kms"
 }
-
-variable "DB_PASSWORD"{
-  default = "changemedefinitely!"
-}
