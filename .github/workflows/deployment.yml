@@ -25,13 +25,27 @@ jobs:
           ls -lRt
           cp env_vars/dev.tf iac_config/
 
-      - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.3.1
-        id: terraform_upload
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          directory: "iac_config"
-          speculative: true
+      # Terraform Init
+      - name: Terraform Init
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          cd iac_config
+          terraform init
 
+      # Terraform Validate
+      - name: Terraform Validate
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          terraform validate
+
+      # Terraform Plan
+      - name: Terraform Plan
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run:
+          | terraform plan
       # - uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
       #   id: run
       #   continue-on-error: true
