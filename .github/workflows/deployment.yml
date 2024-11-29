@@ -84,7 +84,7 @@ jobs:
       - name: Test Database Connectivity and Schema
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_HOST: ${{ steps.apply.outputs.apply.DB_ENDPOINT }}"
+          DB_HOST: ${{ steps.apply.outputs.DB_ENDPOINT }}
         run: |
           chmod +x test/*
           ./test/test_connectivity.sh
