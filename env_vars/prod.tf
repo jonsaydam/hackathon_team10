@@ -1,3 +1,14 @@
+terraform { 
+  cloud { 
+    
+    organization = "DevSecOpsHackathon" 
+
+    workspaces { 
+      name = "hackathon_team10_prod" 
+    } 
+  } 
+}
+
 variable "env" {
 default = "prod" 
 }
