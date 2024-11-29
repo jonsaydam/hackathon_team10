@@ -135,15 +135,14 @@ jobs:
 
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           export DB_NAME=devdatabase
-          pwd
-          ls -lRt
-          cd ../schemas/init_schema.sh
+          ./schemas/init_schema.sh
 
       # Test Database
       - name: Test Database Connectivity and Schema
         run: |
-          ../test/test_connectivity.sh
-          ../test/test_data_integrity.sh
+
+          ./test/test_connectivity.sh
+          ./test/test_data_integrity.sh
 
 #   PROD_PLAN:
 #     name: Terraform Prod Planning
