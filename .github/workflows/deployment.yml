@@ -41,7 +41,7 @@ jobs:
         if: github.event_name == 'pull_request'
         id: plan-comment
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.G_TOKEN }}
           script: |
             // 1. Retrieve existing bot comments for the PR
             const { data: comments } = await github.rest.issues.listComments({
