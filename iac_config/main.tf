@@ -51,7 +51,7 @@ module "aurora" {
   engine_version                  = var.engine_version
   database_name                   = local.database_name
   master_username                 = var.master_username
-  master_password                 = ${{ secrets.DB_PASSWORD }}
+  master_password                 = "${{ secrets.DB_PASSWORD }}"
   subnet_ids                      = flatten([for vpc in [module.vpc[0]] : vpc.public_subnets])
   security_group_ids              = [aws_security_group.security_group[0].id]
   instance_count                  = var.instance_count
