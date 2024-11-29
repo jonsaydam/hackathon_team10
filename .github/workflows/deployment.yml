@@ -11,10 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     env:
-      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-      PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-      TF_HOSTNAME: "app.terraform.io"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
@@ -57,10 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     env:
-      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-      PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-      TF_HOSTNAME: "app.terraform.io"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
@@ -80,29 +72,26 @@ jobs:
           terraform init
           terraform apply -auto-approve
           endpoint=`terraform output`
-          echo $endpoint > ../schemas/terraform_output.json
+          echo "DB_ENDPOINT=$endpoint" >> $GITHUB_OUTPUT
 
       - name: Run Schema Initialization
         id: db_deploy
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ steps.apply.outputs.apply.DB_ENDPOINT }}"
         run: |
-          pwd
-          ls -lRt
-          export PGPASSWORD=${{ secrets.DB_PASSWORD }}
-          export DB_NAME=devdatabase
           chmod +x schemas/init_schema.sh
-          cd schemas
-          ./init_schema.sh
+          ./schemas/init_schema.sh
 
       # Test Database
       - name: Test Database Connectivity and Schema
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ steps.apply.outputs.apply.DB_ENDPOINT }}"
         run: |
-          export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           chmod +x test/*
-          pwd
-          cp schemas/terraform_output.json test/terraform_output.json
-          cd test
-          ./test_connectivity.sh
-          ./test_data_integrity.sh
+          ./test/test_connectivity.sh
+          ./test/test_data_integrity.sh
 
   # PROD_PLAN:
   #   name: Terraform Prod Planning
