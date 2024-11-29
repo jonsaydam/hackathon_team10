@@ -1,3 +1,4 @@
+
 terraform { 
   cloud { 
     
@@ -41,8 +42,13 @@ variable "engine_version" {
   default  = "15.4"
 }
 
-variable "master_username" {
-  default  = "app_admin"
+variable "DB_USER" {
+}
+
+variable "DB_NAME" {
+}
+
+variable "DB_PASSWORD"{
 }
 
 variable "backup_retention_period" {
@@ -92,9 +98,5 @@ variable "auto_minor_version_upgrade" {
 locals {
   vpc_name  =  "vpc-${var.env}"
   cluster_identifier = "${var.env}-aurora-cluster"
-  database_name = "${var.env}database"
   kms_key_id  = "alias/${var.env}-aurora-kms"
-}
-
-variable "DB_PASSWORD"{
 }
