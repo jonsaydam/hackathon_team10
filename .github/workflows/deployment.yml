@@ -65,7 +65,15 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v3
-
+      
+       # Terraform Init
+      - name: Terraform Init
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          cd iac_config
+          terraform init
+        
       - name: Configuration File upload
         id: upload
         run: |
