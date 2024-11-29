@@ -68,7 +68,7 @@ jobs:
           cd iac_config
           terraform init
           terraform apply -auto-approve -var="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" -var="DB_NAME=${{ secrets.DB_NAME }}" -var="DB_USER=${{ secrets.DB_USER }}"
-          endpoint=`terraform output`
+          endpoint=`terraform output -raw endpoint`
           echo "DB_ENDPOINT=$endpoint" >> $GITHUB_OUTPUT
 
       - name: Run Schema Initialization
