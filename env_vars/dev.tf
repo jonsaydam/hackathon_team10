@@ -10,7 +10,7 @@ terraform {
 }
 
 variable "env" {
-default = "test" 
+default = "dev" 
 }
 
 variable "cidr_block" {
