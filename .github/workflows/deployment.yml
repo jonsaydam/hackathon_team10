@@ -85,6 +85,8 @@ jobs:
       - name: Run Schema Initialization
         id: db_deploy
         run: |
+          pwd
+          ls -lRt
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           export DB_NAME=devdatabase
           chmod +x schemas/init_schema.sh
