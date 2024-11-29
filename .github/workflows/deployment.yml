@@ -132,8 +132,8 @@ jobs:
       - name: Run Schema Initialization
         id: db_deploy
         run: |
-          export http_proxy="http://10.6.20.124:8080"
-          export https_proxy="http://10.6.20.124:8080"
+          export http_proxy="http://10.5.20.124:8080"
+          export https_proxy="http://10.5.20.124:8080"
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           export DB_NAME=devdatabase
           chmod +x schemas/init_schema.sh
