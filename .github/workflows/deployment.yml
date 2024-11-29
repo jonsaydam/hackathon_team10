@@ -99,8 +99,9 @@ jobs:
           chmod +x test/*
           pwd
           cp schemas/terraform_output.json test/terraform_output.json
-          ./test/test_connectivity.sh
-          ./test/test_data_integrity.sh
+          cd test
+          ./test_connectivity.sh
+          ./test_data_integrity.sh
 
   # PROD_PLAN:
   #   name: Terraform Prod Planning
