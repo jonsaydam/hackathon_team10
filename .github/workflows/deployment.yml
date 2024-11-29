@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 jobs:
   DEV_PLAN:
-    name: Terraform DEV Planning
+    name: Terraform Dev Planning
     runs-on: ubuntu-latest
     environment: dev
     env:
