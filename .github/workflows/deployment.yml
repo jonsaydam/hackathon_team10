@@ -132,15 +132,15 @@ jobs:
       - name: Create Tables
         id: db_deploy
         run: |
-          endpoint=`cat terraform_output.json`
-          curl -O https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
-          tar -xzf postgresql-15.4.tar.gz
-          cd postgresql-15.4
-          ./configure --without-server --prefix=$HOME/pgsql
-          make
-          make install
-          echo 'export PATH=$HOME/pgsql/bin:$PATH' >> ~/.bashrc
-          source ~/.bashrc
+          # endpoint=`cat terraform_output.json`
+          # curl -O https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
+          # tar -xzf postgresql-15.4.tar.gz
+          # cd postgresql-15.4
+          # ./configure --without-server --prefix=$HOME/pgsql
+          # make
+          # make install
+          # echo 'export PATH=$HOME/pgsql/bin:$PATH' >> ~/.bashrc
+          # source ~/.bashrc
           export PGPASSWORD=${secrets.DB_PASSWORD}
           psql -h $endpoint -U app_admin -d devdatabase -c "
           CREATE TABLE Payee (

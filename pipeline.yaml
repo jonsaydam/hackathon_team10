@@ -1,5 +1,5 @@
 githubActions:
   pipelineVersion: 'main'
-  runnerImageName: 'runner-docker'
+  runnerImageName: 'runner-infra'
   runnerImageVersion: 'beta'
   pipelineLoggingLevel: 'VERBOSE'
