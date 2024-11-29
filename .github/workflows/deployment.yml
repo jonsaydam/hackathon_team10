@@ -29,7 +29,7 @@ jobs:
         id: terraform_upload
         with:
           workspace: ${{ env.TF_WORKSPACE }}
-          directory: ${{ iac_config }}
+          directory: "iac_config"
           speculative: true
 
       - uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
