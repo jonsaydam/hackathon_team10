@@ -51,6 +51,26 @@ jobs:
           cd iac_config
           terraform plan
 
+  DEV_APPLY:
+    name: Terraform Dev Provision
+    needs: [DEV_PLAN]
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
+      TF_HOSTNAME: "app.terraform.io"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configuration File upload
+        id: upload
+        run: |
+          cp env_vars/dev.tf iac_config/
+
       - name: Terraform Apply
         id: apply
         env:
@@ -61,97 +81,20 @@ jobs:
           endpoint=`terraform output`
           echo $endpoint > terraform_output.json
 
+      - name: Run Schema Initialization
+        id: db_deploy
+        run: |
+          export PGPASSWORD=${{ secrets.DB_PASSWORD }}
+          export DB_NAME=devdatabase
+          chmod +x schemas/init_schema.sh
+          ./schemas/init_schema.sh
 
-      # - uses: actions/github-script@v6
-      #   if: github.event_name == 'pull_request'
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       // 1. Retrieve existing bot comments for the PR
-      #       const { data: comments } = await github.rest.issues.listComments({
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         issue_number: context.issue.number,
-      #       })
-      #       const botComment = comments.find(comment => {
-      #         return comment.user.type === 'Bot' && comment.body.includes('HCP Terraform Plan Output')
-      #       })
-      #       const output = `#### HCP Terraform Plan Output
-      #          \`\`\`\n
-      #          Plan: ${{ steps.plan-output.outputs.add }} to add, ${{ steps.plan-output.outputs.change }} to change, ${{ steps.plan-output.outputs.destroy }} to destroy.
-      #          \`\`\`
-      #          [HCP Terraform Plan](${{ steps.run.outputs.run_link }})
-      #          `
-      #       // 3. If we have a comment, update it, otherwise create a new one
-      #       if (botComment) {
-      #         github.rest.issues.updateComment({
-      #           owner: context.repo.owner,
-      #           repo: context.repo.repo,
-      #           comment_id: botComment.id,
-      #           body: output
-      #         })
-      #       } else {
-      #         github.rest.issues.createComment({
-      #           issue_number: context.issue.number,
-      #           owner: context.repo.owner,
-      #           repo: context.repo.repo,
-      #           body: output
-      #         })
-      #       }
-
-      #   ## Check Run Status, if not planned_and_finished fail the job
-      # - id: terraform-cloud-check-run-status
-      #   if: ${{ steps.run.outputs.run_status != 'planned_and_finished'}}
-      #   run: |
-      #     echo "HCP Terraform Run Failed or Requires Further Attention"
-      #     echo "Run Status: '${{ steps.run.outputs.run_status }}'"
-      #     echo "${{ steps.run.outputs.run_link }}"
-      #     exit 1
-
-
-  # DEV_APPLY:
-  #   name: Terraform Dev Provision
-  #   needs: [DEV_PLAN]
-  #   runs-on: self-hosted
-  #   environment: dev
-  #   env:
-  #     BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-  #     PIPELINE_LOGGING_LEVEL: DEBUG
-  #     TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-  #     TF_HOSTNAME: "app.terraform.io"
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     - name: Configuration File upload
-  #       id: upload
-  #       run: |
-  #         cp env_vars/dev.tf iac_config/
-
-  #     - name: Running apply action
-  #       id: APPLY
-  #       uses: jonsaydam/terraform_actions/actions/apply_tf_workspace@main
-  #       with:
-  #         TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
-  #         TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
-  #         TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
-  #         TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
-  #         BUILD_FOLDER: iac_config
-  #         TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
-
-  #     - name: Run Schema Initialization
-  #       id: db_deploy
-  #       run: |
-  #         export PGPASSWORD=${{ secrets.DB_PASSWORD }}
-  #         export DB_NAME=devdatabase
-  #         chmod +x schemas/init_schema.sh
-  #         ./schemas/init_schema.sh
-
-  #     # Test Database
-  #     - name: Test Database Connectivity and Schema
-  #       run: |
-  #         chmod +x test/*
-  #         ./test/test_connectivity.sh
-  #         ./test/test_data_integrity.sh
+      # Test Database
+      - name: Test Database Connectivity and Schema
+        run: |
+          chmod +x test/*
+          ./test/test_connectivity.sh
+          ./test/test_data_integrity.sh
 
   # PROD_PLAN:
   #   name: Terraform Prod Planning
