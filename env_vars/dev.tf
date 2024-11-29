@@ -86,4 +86,5 @@ locals {
 }
 
 variable "DB_PASSWORD"{
+  default = "changemedefinitely!"
 }
