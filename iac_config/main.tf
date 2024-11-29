@@ -4,7 +4,7 @@ provider "aws" {
 
 module "vpc" {
   count       =     var.vpc_enabled ? 1 : 0
-  source      =     "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
+  source      = "app.terraform.io/DevSecOpsHackathon/team10_network/aws"
   version     =     "1.3.3"
   region      =     var.region
   env         =     var.env
@@ -40,7 +40,7 @@ resource "aws_security_group" "security_group" {
 
 module "aurora" {
   count                           = var.aurora_enabled ? 1 : 0
-  source                          = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_aurora/aws"
+  source                          = "app.terraform.io/DevSecOpsHackathon/team10_aurora/aws"
   version                         = "1.0.3"
   region                          = var.region
   azs                             = var.azs
