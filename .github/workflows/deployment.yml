@@ -51,8 +51,10 @@ jobs:
           cd iac_config
           terraform plan
 
-      - name: Wait for Terraform Apply
-        id: wait
+      - name: Terraform Apply
+        id: apply
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
           cd iac_config
           terraform apply
