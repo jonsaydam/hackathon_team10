@@ -31,78 +31,78 @@ jobs:
     outputs:
       service_name: ${{ steps.runner_service_deployment.outputs.service_name }}
 
-  DEV_PLAN:
-    name: Terraform DEV Planning
-    needs: [INITIALIZE]
-    runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
-    environment: dev
-    env:
-      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-      PIPELINE_LOGGING_LEVEL: DEBUG
-      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-      TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
-    steps:
-      - uses: actions/checkout@v3
+  # DEV_PLAN:
+  #   name: Terraform DEV Planning
+  #   needs: [INITIALIZE]
+  #   runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
+  #   environment: dev
+  #   env:
+  #     BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+  #     PIPELINE_LOGGING_LEVEL: DEBUG
+  #     TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
+  #     TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Configuration File upload
-        id: upload
-        run: |
-          pwd
-          ls -lRt
-          cp env_vars/dev.tf iac_config/
+  #     - name: Configuration File upload
+  #       id: upload
+  #       run: |
+  #         pwd
+  #         ls -lRt
+  #         cp env_vars/dev.tf iac_config/
 
-      - name: Running speculative plan action
-        id: speculative-plan
-        uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
-        with:
-          TF_WORKSPACE: "${{ vars.TF_WORKSPACE }}"
-          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
-          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
-          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
-          BUILD_FOLDER: "iac_config"
-          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+  #     - name: Running speculative plan action
+  #       id: speculative-plan
+  #       uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
+  #       with:
+  #         TF_WORKSPACE: "${{ vars.TF_WORKSPACE }}"
+  #         TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+  #         TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+  #         TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+  #         BUILD_FOLDER: "iac_config"
+  #         TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
-      - name: Update PR
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        id: plan-comment
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // 1. Retrieve existing bot comments for the PR
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-            const botComment = comments.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
-            });
-            const output = `#### Terraform Cloud Plan Output
-            \`\`\`
-            ${{ steps.speculative-plan.outputs.OUTPUT1_MESSAGE }}
-            ${{ steps.speculative-plan.outputs.OUTPUT2_MESSAGE }}
-            \`\`\`
-            [Terraform Cloud Plan](${{ steps.speculative-plan.outputs.TFE_RUN_URL }})
-            `;
-            // 3. Delete previous comment so PR timeline makes sense
-            if (botComment) {
-              github.rest.issues.deleteComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-              });
-            }
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            });
+  #     - name: Update PR
+  #       uses: actions/github-script@v6
+  #       if: github.event_name == 'pull_request'
+  #       id: plan-comment
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         script: |
+  #           // 1. Retrieve existing bot comments for the PR
+  #           const { data: comments } = await github.rest.issues.listComments({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             issue_number: context.issue.number,
+  #           });
+  #           const botComment = comments.find(comment => {
+  #             return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
+  #           });
+  #           const output = `#### Terraform Cloud Plan Output
+  #           \`\`\`
+  #           ${{ steps.speculative-plan.outputs.OUTPUT1_MESSAGE }}
+  #           ${{ steps.speculative-plan.outputs.OUTPUT2_MESSAGE }}
+  #           \`\`\`
+  #           [Terraform Cloud Plan](${{ steps.speculative-plan.outputs.TFE_RUN_URL }})
+  #           `;
+  #           // 3. Delete previous comment so PR timeline makes sense
+  #           if (botComment) {
+  #             github.rest.issues.deleteComment({
+  #               owner: context.repo.owner,
+  #               repo: context.repo.repo,
+  #               comment_id: botComment.id,
+  #             });
+  #           }
+  #           github.rest.issues.createComment({
+  #             issue_number: context.issue.number,
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             body: output
+  #           });
 
   DEV_APPLY:
     name: Terraform Dev Provision
-    needs: [INITIALIZE, DEV_PLAN]
+    needs: [INITIALIZE]
     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
     environment: dev
     env:
@@ -135,6 +135,8 @@ jobs:
 
           export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           export DB_NAME=devdatabase
+          pwd
+          ls -lRt
           cd ../schemas/init_schema.sh
 
       # Test Database
