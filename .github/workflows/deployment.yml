@@ -90,69 +90,71 @@ jobs:
           ./test/test_connectivity.sh
           ./test/test_data_integrity.sh
 
-  # PROD_PLAN:
-  #   name: Terraform Prod Planning
-  #   needs: [DEV_PLAN, DEV_APPLY]
-  #   runs-on: self-hosted
-  #   environment: prod
-  #   env:
-  #     BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-  #     PIPELINE_LOGGING_LEVEL: DEBUG
-  #     TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-  #     TF_HOSTNAME: "app.terraform.io"
-  #   steps:
-  #     - uses: actions/checkout@v3
+  PROD_PLAN:
+    name: Terraform Prod Planning
+    needs: [DEV_PLAN, DEV_APPLY]
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Configuration File upload
-  #       id: upload
-  #       run: |
-  #         cp env_vars/dev.tf iac_config/
+      - name: Configuration File upload
+        id: upload
+        run: |
+          pwd
+          ls -lRt
+          cp env_vars/dev.tf iac_config/
 
-  #     - name: Running speculative plan action
-  #       id: speculative-plan
-  #       uses: jonsaydam/terraform_actions/actions/plan_tf_workspace@main
-  #       with:
-  #         TF_WORKSPACE: "hackaton_team10_prod"
-  #         TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
-  #         TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
-  #         TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
-  #         BUILD_FOLDER: iac_config
-  #         TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+      # Terraform Init
+      - name: Terraform Init
+        run: |
+          cd iac_config
+          terraform init
 
-  # PROD_APPLY:
-  #   name: Terraform Production Provision
-  #   needs: [DEV_PLAN, DEV_APPLY, PROD_PLAN]
-  #   runs-on: self-hosted
-  #   environment: prod
-  #   env:
-  #     BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-  #     PIPELINE_LOGGING_LEVEL: DEBUG
-  #     TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-  #     TF_HOSTNAME: "app.terraform.io"
-  #   steps:
-  #     - uses: actions/checkout@v3
+      # Terraform Plan
+      - name: Terraform Plan
+        run: |
+          cd iac_config
+          terraform plan -var="DB_NAME=${{ secrets.DB_NAME }}" -var="DB_USER=${{ secrets.DB_USER }}"
 
-  #     - name: Configuration File upload
-  #       id: upload
-  #       run: |
-  #         cp env_vars/prod.tf iac_config/
+  PROD_APPLY:
+    name: Terraform Production Provision
+    needs: [PROD_PLAN]
+    runs-on: ubuntu-latest
+    environment: prod
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+    steps:
+      - uses: actions/checkout@v3
+        
+      - name: Configuration File upload
+        id: upload
+        run: |
+          cp env_vars/dev.tf iac_config/
 
-  #     - name: Running apply action
-  #       id: APPLY
-  #       uses: jonsaydam/terraform_actions/actions/apply_tf_workspace@main
-  #       with:
-  #         TF_WORKSPACE: "hackaton_team10_prod"
-  #         TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
-  #         TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
-  #         TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
-  #         BUILD_FOLDER: iac_config
-  #         TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+      - name: Terraform Apply
+        id: apply
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          cd iac_config
+          terraform init
+          terraform apply -auto-approve -var="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" -var="DB_NAME=${{ secrets.DB_NAME }}" -var="DB_USER=${{ secrets.DB_USER }}"
+          endpoint=`terraform output -raw endpoint`
+          echo "DB_ENDPOINT=$endpoint" >> $GITHUB_OUTPUT
 
-  #     - name: Run Schema Initialization
-  #       id: db_deploy
-  #       run: |
-
-  #         export PGPASSWORD=${{ secrets.DB_PASSWORD }}
-  #         export DB_NAME=proddatabase
-  #         cd ../schemas/init_schema.sh
-          
+      - name: Run Schema Initialization
+        id: db_deploy
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ steps.apply.outputs.DB_ENDPOINT }}
+        run: |
+          chmod +x schemas/init_schema.sh
+          ./schemas/init_schema.sh
