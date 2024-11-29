@@ -50,18 +50,35 @@ jobs:
         run: |
           cd iac_config
           terraform plan
-      # - uses: hashicorp/tfc-workflows-github/actions/create-run@v1.3.1
-      #   id: run
-      #   continue-on-error: true
-      #   with:
-      #     workspace: ${{ env.TF_WORKSPACE }}
-      #     configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
-      #     plan_only: true
+      - name: Terraform Apply
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+        run: |
+          cd iac_config
+      - name: Wait for Terraform Apply
+        id: wait
+        run: |
+          echo "Waiting for Terraform Apply to complete in Terraform Cloud..."
+          while true; do
+            # Check the status of the most recent Terraform run in the workspace
+            STATUS=$(curl -s \
+              --header "Authorization: Bearer ${{ secrets.TF_API_TOKEN }}" \
+              --header "Content-Type: application/vnd.api+json" \
+              https://app.terraform.io/api/v2/workspaces/hackathon_team10_np/runs | jq -r '.data[0].attributes.status')
 
-      # - uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.3.1
-      #   id: plan-output
-      #   with:
-      #     plan: ${{ steps.run.outputs.plan_id }}
+            if [ "$STATUS" == "applied" ]; then
+              echo "Terraform Apply has completed successfully."
+              break
+            elif [ "$STATUS" == "errored" ]; then
+              echo "Terraform Apply failed. Exiting workflow."
+              exit 1
+            else
+              echo "Current status: $STATUS. Retrying in 30 seconds..."
+              sleep 30
+            fi
+          done   
+
+
 
       # - uses: actions/github-script@v6
       #   if: github.event_name == 'pull_request'
