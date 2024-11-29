@@ -1,3 +1,3 @@
-# output "endpoint" {
-#   value   = module.aws_rds_cluster.aurora.endpoint
-# }
+output "endpoint" {
+  value   = module.aurora[0].cluster_endpoint
+}

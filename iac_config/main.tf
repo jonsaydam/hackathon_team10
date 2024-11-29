@@ -5,7 +5,7 @@ provider "aws" {
 module "vpc" {
   count       =     var.vpc_enabled ? 1 : 0
   source      =     "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_network/aws"
-  version     =     "1.3.2"
+  version     =     "1.3.3"
   region      =     var.region
   env         =     var.env
   vpc_enabled =     var.vpc_enabled
@@ -39,10 +39,6 @@ resource "aws_security_group" "security_group" {
   }
 }
 
-output "security_group_id" {
-  value = aws_security_group.security_group[0].id
-}
-
 module "aurora" {
   count                           = var.aurora_enabled ? 1 : 0
   source                          = "mtlmtfe01.mgmt.interac.ca/DevSecOpsHackathon/team10_aurora/aws"
@@ -73,18 +69,18 @@ module "aurora" {
   depends_on                      = [ module.vpc ]
 }
 
-# provider "postgresql" {
-#   host     = module.aurora[0].cluster_endpoint
-#   port     = 5432
-#   username = var.master_username
-#   password = var.master_password
-#   sslmode  = "require"
-# }
+provider "postgresql" {
+  host     = module.aurora[0].cluster_endpoint
+  port     = 5432
+  username = var.master_username
+  password = var.master_password
+  sslmode  = "require"
+}
 
-# resource "postgresql_database" "my_database" {
-#   for_each = toset(["${var.env}-db"])
-#   name     = each.value
-# }
+resource "postgresql_database" "my_database" {
+  for_each = toset(["${var.env}-db"])
+  name     = each.value
+}
 
 
 # # Call the network module
