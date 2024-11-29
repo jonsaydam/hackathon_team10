@@ -132,6 +132,7 @@ jobs:
       - name: Create Tables
         id: db_deploy
         run: |
+          endpoint=`cat terraform_output.json`
           curl -O https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
           tar -xzf postgresql-15.4.tar.gz
           cd postgresql-15.4
@@ -140,8 +141,8 @@ jobs:
           make install
           echo 'export PATH=$HOME/pgsql/bin:$PATH' >> ~/.bashrc
           source ~/.bashrc
-          export PGPASSWORD=changemedefinitely!
-          psql -h dev-aurora-cluster-instance-2.cj8e6euumn25.us-east-1.rds.amazonaws.com -U app_admin -d devdatabase -c "
+          export PGPASSWORD=${secrets.DB_PASSWORD}
+          psql -h $endpoint -U app_admin -d devdatabase -c "
           CREATE TABLE Payee (
           user_id SERIAL PRIMARY KEY,
           email TEXT UNIQUE NOT NULL,
