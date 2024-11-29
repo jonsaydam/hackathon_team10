@@ -41,7 +41,7 @@ variable "engine_version" {
   default  = "15.4"
 }
 
-variable "master_username" {
+variable "DB_USER" {
 }
 
 variable "DB_NAME" {
