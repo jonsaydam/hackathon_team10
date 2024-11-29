@@ -27,7 +27,7 @@ jobs:
 
       - name: Running speculative plan action
         id: speculative-plan
-        uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
+        uses: jonsaydam/terraform_actions/actions/plan_tf_workspace@main
         with:
           TF_WORKSPACE: "${{ vars.TF_WORKSPACE }}"
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
@@ -93,7 +93,7 @@ jobs:
 
       - name: Running apply action
         id: APPLY
-        uses: jonsaydam/infrastructure-provision-library/actions/apply_tf_workspace@hackathon
+        uses: jonsaydam/terraform_actions/actions/apply_tf_workspace@main
         with:
           TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
@@ -117,79 +117,68 @@ jobs:
           ./test/test_connectivity.sh
           ./test/test_data_integrity.sh
 
-#   PROD_PLAN:
-#     name: Terraform Prod Planning
-#     needs: [INITIALIZE, DEV_APPLY]
-#     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
-#     environment: prod
-#     env:
-#       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-#       PIPELINE_LOGGING_LEVEL: DEBUG
-#       TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-#       TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
-#     steps:
-#       - uses: actions/checkout@v3
+  PROD_PLAN:
+    name: Terraform Prod Planning
+    needs: [DEV_APPLY]
+    runs-on: self-hosted
+    environment: prod
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
+      TF_HOSTNAME: "app.terraform.io"
+    steps:
+      - uses: actions/checkout@v3
 
-#       - name: Configuration File upload
-#         shell: 'bash -ileo pipefail {0}'
-#         id: upload
-#         run: |
-#           cp env_vars/dev.tf iac_config/
+      - name: Configuration File upload
+        id: upload
+        run: |
+          cp env_vars/dev.tf iac_config/
 
-#       - name: Running speculative plan action
-#         id: speculative-plan
-#         uses: InfrastructureAutomation/infrastructure-provision-library/actions/plan_tf_workspace@hackathon
-#         with:
-#           TF_WORKSPACE: "hackaton_team10_prod"
-#           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
-#           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
-#           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
-#           BUILD_FOLDER: iac_config
-#           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
+      - name: Running speculative plan action
+        id: speculative-plan
+        uses: jonsaydam/terraform_actions/actions/plan_tf_workspace@main
+        with:
+          TF_WORKSPACE: "hackaton_team10_prod"
+          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+          BUILD_FOLDER: iac_config
+          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
-#   PROD_APPLY:
-#     name: Terraform Production Provision
-#     needs: [INITIALIZE, PROD_PLAN]
-#     runs-on: ${{ needs.INITIALIZE.outputs.service_name }}
-#     environment: prod
-#     env:
-#       BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
-#       PIPELINE_LOGGING_LEVEL: DEBUG
-#       TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
-#       TF_HOSTNAME: "mtlmtfe01.mgmt.interac.ca"
-#     steps:
-#       - uses: actions/checkout@v3
+  PROD_APPLY:
+    name: Terraform Production Provision
+    runs-on: self-hosted
+    environment: prod
+    env:
+      BASH_SHELL_COMMAND: "bash -ileo pipefail {0}"
+      PIPELINE_LOGGING_LEVEL: DEBUG
+      TF_CLOUD_ORGANIZATION: "DevSecOpsHackathon"
+      TF_HOSTNAME: "app.terraform.io"
+    steps:
+      - uses: actions/checkout@v3
 
-#       - name: Configuration File upload
-#         id: upload
-#         run: |
-#           cp env_vars/prod.tf iac_config/
+      - name: Configuration File upload
+        id: upload
+        run: |
+          cp env_vars/prod.tf iac_config/
 
-#       - name: Running apply action
-#         id: APPLY
-#         uses: InfrastructureAutomation/infrastructure-provision-library/actions/apply_tf_workspace@main
-#         with:
-#           TF_WORKSPACE: "hackaton_team10_prod"
-#           TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
-#           TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
-#           TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
-#           BUILD_FOLDER: iac_config
-#           TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
-#
-      # - name: Run Schema Initialization
-      #   id: db_deploy
-      #   run: |
+      - name: Running apply action
+        id: APPLY
+        uses: jonsaydam/terraform_actions/actions/apply_tf_workspace@main
+        with:
+          TF_WORKSPACE: "hackaton_team10_prod"
+          TF_ORGANIZATION: ${{ env.TF_CLOUD_ORGANIZATION }}
+          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN}}
+          TF_HOSTNAME: ${{ env.TF_HOSTNAME }}
+          BUILD_FOLDER: iac_config
+          TF_RUN_CODE: "${{ github.head_ref }} & PR #${{ github.event.number }}"
 
-      #     export PGPASSWORD=${{ secrets.DB_PASSWORD }}
-      #     export DB_NAME=proddatabase
-      #     cd ../schemas/init_schema.sh
-  RUNNER_CLEANUP:
-    name: Clean up job and runner
-#    needs: [INITIALIZE, DEV_PLAN, DEV_APPLY, PROD_PLAN, PROD_APPLY]
-    needs: [INITIALIZE, DEV_APPLY]
-    if: always()
-    uses: 'Interac/composite-actions-core/.github/workflows/cleanup_runners.yaml@main'
-    with:
-      runner-service-name: ${{ needs.INITIALIZE.outputs.service_name }}
-    secrets:
-      auth_token: ${{ secrets.RUNNER_DEPLOYMENT_PAT }}
+      - name: Run Schema Initialization
+        id: db_deploy
+        run: |
+
+          export PGPASSWORD=${{ secrets.DB_PASSWORD }}
+          export DB_NAME=proddatabase
+          cd ../schemas/init_schema.sh
+          
