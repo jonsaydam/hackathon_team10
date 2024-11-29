@@ -96,6 +96,7 @@ jobs:
       # Test Database
       - name: Test Database Connectivity and Schema
         run: |
+          export PGPASSWORD=${{ secrets.DB_PASSWORD }}
           chmod +x test/*
           pwd
           cp schemas/terraform_output.json test/terraform_output.json
