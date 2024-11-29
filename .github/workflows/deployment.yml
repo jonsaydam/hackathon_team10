@@ -58,7 +58,8 @@ jobs:
         run: |
           cd iac_config
           terraform apply
-
+          endpoint=`terraform output`
+          echo $endpoint > terraform_output.json
 
 
       # - uses: actions/github-script@v6
