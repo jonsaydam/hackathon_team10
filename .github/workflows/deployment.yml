@@ -131,7 +131,7 @@ jobs:
       - name: Create Tables
         id: db_deploy
         run: |
-          wget https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
+          curl -o https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.gz
           tar -xzf postgresql-*.tar.gz
           cd postgresql-*
           ./configure --without-server --prefix=$HOME/pgsql
@@ -157,7 +157,7 @@ jobs:
           status TEXT NOT NULL,
           FOREIGN KEY (user_id) REFERENCES Payee(user_id)
           );
-       
+
           CREATE TABLE fraud_scores (
           score_id SERIAL PRIMARY KEY,
           transaction_id INTEGER NOT NULL,
