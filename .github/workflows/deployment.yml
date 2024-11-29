@@ -80,7 +80,7 @@ jobs:
           terraform init
           terraform apply -auto-approve
           endpoint=`terraform output`
-          echo $endpoint > terraform_output.json
+          echo $endpoint > ../terraform_output.json
 
       - name: Run Schema Initialization
         id: db_deploy
