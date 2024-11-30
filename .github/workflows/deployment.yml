@@ -107,7 +107,7 @@ jobs:
         run: |
           pwd
           ls -lRt
-          cp env_vars/dev.tf iac_config/
+          cp env_vars/prod.tf iac_config/
 
       # Terraform Init
       - name: Terraform Init
@@ -137,7 +137,7 @@ jobs:
       - name: Configuration File upload
         id: upload
         run: |
-          cp env_vars/dev.tf iac_config/
+          cp env_vars/prod.tf iac_config/
 
       - name: Terraform Apply
         id: apply
