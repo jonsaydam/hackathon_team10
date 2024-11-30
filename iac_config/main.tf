@@ -41,8 +41,9 @@ resource "aws_security_group" "security_group" {
 module "aurora" {
   count                           = var.aurora_enabled ? 1 : 0
   source                          = "app.terraform.io/DevSecOpsHackathon/team10_aurora/aws"
-  version                         = "1.0.4"
+  version                         = "1.0.5"
   region                          = var.region
+  env                             = var.env
   azs                             = var.azs
   aurora_enabled                  = var.aurora_enabled
   cluster_identifier              = local.cluster_identifier
