@@ -42,12 +42,15 @@ variable "engine_version" {
 }
 
 variable "DB_USER" {
+ default  = "user"  
 }
 
 variable "DB_NAME" {
+  default = "test"
 }
 
 variable "DB_PASSWORD"{
+  default = "changeme"
 }
 
 variable "backup_retention_period" {
